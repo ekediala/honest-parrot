@@ -1,73 +1,80 @@
 <template>
-  <div class="container">
-    <div>
-      <logo />
-      <h1 class="title">
-        honest-parrot
-      </h1>
-      <h2 class="subtitle">
-        I just tell people things they refuse to tell themselves
-      </h2>
-      <div class="links">
-        <a href="https://nuxtjs.org/" target="_blank" class="button--green">
-          Documentation
-        </a>
+  <main class="h-full h-screen">
+    <div
+      class="max-w-md m-auto md:mt-16 h-auto rounded md:rounded-lg overflow-hidden"
+    >
+      <img
+        class="w-full rounded-lg shadow-lg h-64"
+        src="../assets/img/parrot.jpg"
+        alt="Sunset in the mountains"
+      />
+      <div class="px-6 justify-center md:mb-20 mb-10 h-48 py-4">
+        <div class="font-bold text-2xl md:text-4xl mt-8 mb-4">
+          The Coldest Sunset
+        </div>
+        <p class="text-blue-200 font-mono md:text-xl text-base">
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus
+          quia, nulla! Maiores et perferendis eaque, exercitationem praesentium
+          nihil.
+        </p>
+      </div>
+      <div class="flex px-6 justify-center py-8">
         <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          class="button--grey"
-        >
-          GitHub
-        </a>
+          title="Listen Again"
+          class="btn btn-pink"
+          href="#"
+          @click.prevent="speak"
+          ><i class="fas fa-volume-up"></i
+        ></a>
+        <a class="btn btn-pink" href="#" @click.prevent="speak"
+          ><i class="fas fa-grin-alt"></i
+        ></a>
+        <a class="btn btn-pink" href="#" @click.prevent="speak"
+          ><i class="fas fa-meh-rolling-eyes"></i
+        ></a>
+        <a class="btn btn-pink" href="#" @click.prevent="speak"
+          ><i class="fab fa-twitter"></i
+        ></a>
       </div>
     </div>
-  </div>
+  </main>
 </template>
-
 <script>
-import Logo from '~/components/Logo.vue'
-
 export default {
-  components: {
-    Logo
+  name: 'Index',
+  data() {
+    return {
+      truth: '',
+      author: ''
+    };
+  },
+
+  mounted() {},
+
+  methods: {
+    speak() {},
+    agree() {},
+    meh() {},
+    share() {}
   }
-}
+};
 </script>
 
 <style>
-/* Sample `apply` at-rules with Tailwind CSS
-.container {
-  @apply min-h-screen flex justify-center items-center text-center mx-auto;
-}
-*/
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+html {
+  background-color: rgba(6, 5, 51, 0.904);
+  color: yellow;
 }
 
-.title {
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
+.half-screen {
+  height: 37vh;
 }
 
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
+.btn {
+  @apply inline-block rounded-full px-3 py-1 text-xl font-semibold mr-2;
 }
 
-.links {
-  padding-top: 15px;
+.btn-pink {
+  @apply bg-pink-700;
 }
 </style>
