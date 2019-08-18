@@ -85,7 +85,8 @@ export default {
       this.loading = true;
       auth
         .signInWithEmailAndPassword(this.email, this.password)
-        .then(() => {
+        .then(async () => {
+          await this.$cookie.set('status', 'loggedIn', '10y');
           this.$router.push('/dashboard');
         })
         .catch((err) => {

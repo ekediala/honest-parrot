@@ -84,7 +84,8 @@ export default {
       if (confirm(`Log Out ?`)) {
         auth
           .signOut()
-          .then(() => {
+          .then(async () => {
+            await this.$cookie.remove('status');
             this.$router.replace('/');
           })
           .catch((err) => {
@@ -99,12 +100,16 @@ export default {
       this.loading = true;
       const author = this.author;
       const truth = this.truth;
+      const haha = 0;
+      const mehs = 0;
       firestoreDB
         .collection('/truths')
         .doc()
         .set({
           author,
-          truth
+          truth,
+          haha,
+          mehs
         })
         .then(() => {
           this.info = 'Successfully Added';
