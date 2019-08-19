@@ -68,10 +68,9 @@
 </template>
 
 <script>
-import { auth } from '../config/firebase';
 export default {
   name: 'Login',
-  middleware: 'guest',
+  middleware: 'auth',
   data() {
     return {
       email: '',
@@ -81,18 +80,27 @@ export default {
     };
   },
   methods: {
-    login() {
-      this.loading = true;
-      auth
-        .signInWithEmailAndPassword(this.email, this.password)
-        .then(async () => {
-          await this.$cookie.set('status', 'loggedIn', '10y');
-          this.$router.push('/dashboard');
-        })
-        .catch((err) => {
-          this.info = err.message;
-          this.loading = false;
-        });
+    async login() {
+      try {
+        this.$toast.show('Logging in...');
+        this.loading = true;
+        await this.$auth
+          .loginWith('local', {
+            data: {
+              email: this.email,
+              password: this.password
+            }
+          })
+          .then(() => {
+            this.$router.push('/');
+          })
+          .catch((e) => {
+            this.$toast.error('Email or Password wrong');
+          })
+          .finally(() => (this.loading = false));
+      } catch (e) {
+        this.$toast.error('Email or Password wrong');
+      }
     }
   }
 };

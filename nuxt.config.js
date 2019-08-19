@@ -22,10 +22,7 @@ export default {
       }
     ]
   },
-  /*
-   ** Customize the progress-bar color
-   */
-  loading: { color: '#fff' },
+
   /*
    ** Global CSS
    */
@@ -46,10 +43,49 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ['@nuxtjs/pwa'],
+  modules: ['@nuxtjs/pwa', '@nuxtjs/axios', '@nuxtjs/auth', '@nuxtjs/toast'],
   /*
    ** Build configuration
    */
+
+  toast: {
+    position: 'top-right',
+    duration: 2000
+  },
+
+  axios: {
+    baseURL: 'http://localhost:8000'
+  },
+
+  loading: {
+    name: 'chasing-dots',
+    color: '#ff5638',
+    background: 'white',
+    height: '4px'
+  },
+
+  auth: {
+    strategies: {
+      redirect: {
+        login: '/login',
+        logout: '/',
+        callback: '/login',
+        home: '/dashboard'
+      },
+      local: {
+        endpoints: {
+          login: {
+            url: '/api/login',
+            method: 'post',
+            propertyName: 'token'
+          },
+          logout: { url: '/api/logout', method: 'get' },
+          user: false
+        }
+      }
+    }
+  },
+
   build: {
     /*
      ** You can extend webpack config here

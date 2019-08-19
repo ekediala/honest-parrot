@@ -67,7 +67,6 @@
 </template>
 
 <script>
-import { auth, firestoreDB } from '../config/firebase';
 export default {
   name: 'Admin',
   middleware: 'auth',
@@ -82,47 +81,14 @@ export default {
   methods: {
     logOut() {
       if (confirm(`Log Out ?`)) {
-        auth
-          .signOut()
-          .then(async () => {
-            await this.$cookie.remove('status');
-            this.$router.replace('/');
-          })
-          .catch((err) => {
-            this.info = err.message;
-            setTimeout(() => {
-              this.info = false;
-            }, 10000);
-          });
       }
     },
     submit() {
       this.loading = true;
-      const author = this.author;
-      const truth = this.truth;
-      const haha = 0;
-      const mehs = 0;
-      firestoreDB
-        .collection('/truths')
-        .doc()
-        .set({
-          author,
-          truth,
-          haha,
-          mehs
-        })
-        .then(() => {
-          this.info = 'Successfully Added';
-        })
-        .catch((err) => {
-          this.info = err.message;
-        })
-        .finally(() => {
-          this.loading = false;
-          setTimeout(() => {
-            this.info = false;
-          }, 10000);
-        });
+      // const author = this.author;
+      // const truth = this.truth;
+      // const haha = 0;
+      // const mehs = 0;
     }
   }
 };
