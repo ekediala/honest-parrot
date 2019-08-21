@@ -71,7 +71,7 @@ export default {
   },
 
   axios: {
-    baseURL: 'https://www.parrot.konetweb.com.ng'
+    baseURL: 'https://honest-parrot-api.herokuapp.com/'
   },
 
   loading: {
