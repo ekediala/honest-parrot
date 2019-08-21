@@ -303,6 +303,6 @@ html {
 }
 
 #aqua {
-  color: aqua;
+  color: #FFD700;
 }
 </style>
