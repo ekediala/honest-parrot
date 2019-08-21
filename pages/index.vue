@@ -31,6 +31,7 @@
           ><i class="fas fa-meh-rolling-eyes"></i>
           {{ truth.meh ? truth.meh : '' }}</a
         >
+        <a class="btn" href="#" @click.prevent="another">→</a>
       </div>
     </div>
   </main>
@@ -121,14 +122,17 @@ export default {
         this.disliked = true;
       }
     }
-    setInterval(async () => {
-      const id = this.$auth.$storage.getCookie('token');
-      const truth = await this.$axios.$get(`/api/truism/${id}`);
-      this.truth = truth;
-    }, 90000);
+    setInterval(() => {
+      this.another();
+    }, 120000);
   },
 
   methods: {
+    async another() {
+      const id = this.$auth.$storage.getCookie('token');
+      const truth = await this.$axios.$get(`/api/truism/${id}`);
+      this.truth = truth;
+    },
     speak() {
       // list of languages is probably not loaded, wait for it
       if (window.speechSynthesis.getVoices().length === 0) {
