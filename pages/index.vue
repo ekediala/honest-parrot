@@ -110,28 +110,32 @@ export default {
   },
 
   mounted() {
-    const interactions = this.truth.interactions;
-    const id = this.$auth.$storage.getCookie('token');
-    if (interactions.hasOwnProperty(id)) {
-      const interaction = interactions[id];
-      if (interaction === 'haha') {
-        this.hahad = 'aqua';
-        this.liked = true;
-      } else {
-        this.mehd = 'aqua';
-        this.disliked = true;
-      }
-    }
+    this.setInteraction();
     setInterval(() => {
       this.another();
     }, 120000);
   },
 
   methods: {
+    setInteraction() {
+      const interactions = this.truth.interactions;
+      const id = this.$auth.$storage.getCookie('token');
+      if (interactions.hasOwnProperty(id)) {
+        const interaction = interactions[id];
+        if (interaction === 'haha') {
+          this.hahad = 'aqua';
+          this.liked = true;
+        } else {
+          this.mehd = 'aqua';
+          this.disliked = true;
+        }
+      }
+    },
     async another() {
       const id = this.$auth.$storage.getCookie('token');
       const truth = await this.$axios.$get(`/api/truism/${id}`);
       this.truth = truth;
+      this.setInteraction();
     },
     speak() {
       // list of languages is probably not loaded, wait for it
@@ -303,6 +307,6 @@ html {
 }
 
 #aqua {
-  color: #FFD700;
+  color: #ffb404;
 }
 </style>
