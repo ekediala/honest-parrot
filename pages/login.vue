@@ -16,12 +16,17 @@
         <input
           id="email"
           v-model="email"
+          v-validate="'required|email'"
           :disabled="loading"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           type="email"
           placeholder="Email"
           required
+          name="email"
         />
+        <span v-show="errors.has('email')" class="text-red-700">{{
+          errors.first('email')
+        }}</span>
       </div>
       <div class="mb-6">
         <label
@@ -33,12 +38,16 @@
         <input
           id="password"
           v-model="password"
+          v-validate="'required|min:8'"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
           type="password"
-          placeholder="******************"
+          placeholder="Enter Password"
           :disabled="loading"
+          name="password"
         />
-        <p class="text-red-500 text-xs italic">Please enter password.</p>
+        <span v-show="errors.has('password')" class="text-red-700">{{
+          errors.first('password')
+        }}</span>
       </div>
       <div class="flex items-center justify-between">
         <button
@@ -79,28 +88,31 @@ export default {
       loading: false
     };
   },
+
   methods: {
-    async login() {
-      try {
-        this.$toast.show('Logging in...');
-        this.loading = true;
-        await this.$auth
-          .loginWith('local', {
-            data: {
-              email: this.email,
-              password: this.password
-            }
-          })
-          .then(() => {
-            this.$router.push('/');
-          })
-          .catch((e) => {
-            this.$toast.error('Email or Password wrong');
-          })
-          .finally(() => (this.loading = false));
-      } catch (e) {
-        this.$toast.error('Email or Password wrong');
-      }
+    login() {
+      this.$validator.validate().then(async (valid) => {
+        if (!valid) {
+          return false;
+        }
+        try {
+          this.$toast.show('Logging in...');
+          this.loading = true;
+          await this.$auth
+            .loginWith('local', {
+              data: {
+                email: this.email,
+                password: this.password
+              }
+            })
+            .catch((e) => {
+              this.$toast.error('Email or Password wrong');
+            })
+            .finally(() => (this.loading = false));
+        } catch (e) {
+          this.$toast.error('Email or Password wrong');
+        }
+      });
     }
   }
 };

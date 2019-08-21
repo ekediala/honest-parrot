@@ -4,7 +4,7 @@ export default {
    ** Headers of the page
    */
   head: {
-    title: process.env.npm_package_name || '',
+    title: 'Honest Parrot',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
@@ -43,7 +43,24 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ['@nuxtjs/pwa', '@nuxtjs/axios', '@nuxtjs/auth', '@nuxtjs/toast'],
+  modules: [
+    '@nuxtjs/pwa',
+    '@nuxtjs/axios',
+    '@nuxtjs/auth',
+    '@nuxtjs/toast',
+    [
+      'nuxt-validate',
+      {
+        lang: 'en',
+        nuxti18n: {
+          locale: {
+            'en-GB': 'en-GB'
+          }
+        }
+        // regular vee-validate options
+      }
+    ]
+  ],
   /*
    ** Build configuration
    */
@@ -54,12 +71,12 @@ export default {
   },
 
   axios: {
-    baseURL: 'http://localhost:8000'
+    baseURL: 'https://www.parrot.konetweb.com.ng'
   },
 
   loading: {
     name: 'chasing-dots',
-    color: '#ff5638',
+    color: 'transparent',
     background: 'white',
     height: '4px'
   },

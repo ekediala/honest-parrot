@@ -8,7 +8,7 @@
         src="../assets/img/parrot.jpg"
         alt="Sunset in the mountains"
       />
-      <div class="px-6 justify-center md:mb-20 mb-10 h-48 py-4">
+      <div class="px-6 justify-center py-4">
         <div v-if="author" class="font-bold text-2xl md:text-4xl mt-8 mb-4">
           {{ author }}
         </div>
@@ -16,24 +16,21 @@
           {{ content }}
         </p>
       </div>
-      <div class="flex px-6 justify-center py-8">
-        <a
-          title="Listen Again"
-          class="btn btn-pink"
-          href="#"
-          @click.prevent="speak"
+      <div class="flex text-gray-100 justify-center">
+        <a title="Listen Again" class="btn" href="#" @click.prevent="speak"
           ><i class="fas fa-volume-up"></i
         ></a>
-        <a class="btn btn-pink" href="#" @click.prevent="haha"
+        <a
+          :id="hahad"
+          class="btn reaction"
+          href="#"
+          @click.prevent="haha($event)"
           ><i class="fas fa-grin-alt"></i> {{ truth.haha ? truth.haha : '' }}</a
         >
-        <a class="btn btn-pink" href="#" @click.prevent="meh"
+        <a :id="mehd" class="btn reaction" href="#" @click.prevent="meh($event)"
           ><i class="fas fa-meh-rolling-eyes"></i>
           {{ truth.meh ? truth.meh : '' }}</a
         >
-        <a class="btn btn-pink" href="#" @click.prevent="share"
-          ><i class="fab fa-twitter"></i
-        ></a>
       </div>
     </div>
   </main>
@@ -44,92 +41,234 @@ export default {
   data() {
     return {
       liked: false,
-      disliked: false
+      disliked: false,
+      mehd: '',
+      hahad: ''
     };
   },
+
   computed: {
     content() {
-      return this.truth.truth;
+      return this.truth.truism;
     },
 
     author() {
       return this.truth.author;
     }
   },
-  asyncData() {
-    const truth = {
-      author: 'Pranav Nasalthi',
-      truth:
-        "Happiness will not come easily as it came when you were young. You would have to work towards it. Discipline and sacrifice would be your best bet. Don't get caught in the YOLO gimmick.",
-      haha: 3,
-      meh: 2
-    };
 
+  async asyncData({ $axios, $auth }) {
+    if (!$auth.$storage.getCookie('token')) {
+      let choice = '';
+      const choices = [
+        'a',
+        'b',
+        'c',
+        'd',
+        'e',
+        'f',
+        'g',
+        'h',
+        'i',
+        'j',
+        'k',
+        'l',
+        'm',
+        'n',
+        'o',
+        'p',
+        'q',
+        'r',
+        's',
+        't',
+        'u',
+        'v',
+        'w',
+        'x',
+        'y',
+        'z',
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ];
+      for (let x = 0; x <= 10; x++) {
+        const index = Math.floor(Math.random() * (choices.length - 1));
+        const pick = choices[index];
+        choice += pick;
+      }
+      $auth.$storage.setCookie('token', choice);
+    }
+    const id = $auth.$storage.getCookie('token');
+    const truth = await $axios.$get(`/api/truism/${id}`);
     return { truth };
   },
+
   mounted() {
-    // let selectedTruthId;
-    // if (this.$cookie.get('seen')) {
-    //   const seenIds = JSON.parse(this.$cookie.get('seen'));
-    //   let allIds = new Set();
-    //   this.collection.forEach((truth) => {
-    //     allIds.add(truth.id);
-    //   });
-    //   const unseenIds = this.difference(seenIds, allIds).values();
-    //   selectedTruthId = unseenIds.next().value;
-    //   seenIds.add(selectedTruthId);
-    //   this.$cookie.set('seen', JSON.stringify(seenIds));
-    // } else {
-    //   selectedTruthId = this.collection[0].id;
-    //   const seen = new Set([selectedTruthId]);
-    //   this.$cookie.set('seen', JSON.stringify(seen));
-    // }
-    // const predicate = (truth) => truth.id === selectedTruthId;
-    // const selectedTruth = this.collection.find(predicate);
-    // this.truth = selectedTruth;
+    const interactions = this.truth.interactions;
+    const id = this.$auth.$storage.getCookie('token');
+    if (interactions.hasOwnProperty(id)) {
+      const interaction = interactions[id];
+      if (interaction === 'haha') {
+        this.hahad = 'aqua';
+        this.liked = true;
+      } else {
+        this.mehd = 'aqua';
+        this.disliked = true;
+      }
+    }
+    setInterval(async () => {
+      const id = this.$auth.$storage.getCookie('token');
+      const truth = await this.$axios.$get(`/api/truism/${id}`);
+      this.truth = truth;
+    }, 90000);
   },
 
   methods: {
-    speak() {},
-    haha() {
+    speak() {
+      // list of languages is probably not loaded, wait for it
+      if (window.speechSynthesis.getVoices().length === 0) {
+        window.speechSynthesis.addEventListener('voiceschanged', () => {
+          this.textToSpeech();
+        });
+      } else {
+        // languages list available, no need to wait
+        this.textToSpeech();
+      }
+    },
+
+    textToSpeech() {
+      // get all voices that browser offers
+      const availableVoices = window.speechSynthesis.getVoices();
+
+      // this will hold an english voice
+      let englishVoice;
+
+      // find voice by language locale "en-US"
+      // if not then select the first voice
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < availableVoices.length; i++) {
+        if (availableVoices[i].lang === 'en-US') {
+          englishVoice = availableVoices[i];
+          break;
+        }
+      }
+      if (englishVoice === '') {
+        englishVoice = availableVoices[0];
+      }
+
+      // new SpeechSynthesisUtterance object
+      const utter = new SpeechSynthesisUtterance();
+      utter.rate = 1;
+      utter.pitch = 1;
+      utter.text = this.truth.truism;
+      utter.voice = englishVoice;
+
+      // speak
+      window.speechSynthesis.speak(utter);
+    },
+
+    async interact(userId, truismId, interactionType) {
+      const response = await this.$axios
+        .post('/api/interact', { userId, truismId, interactionType })
+        .then((response) => {
+          this.truth = response.data;
+          // this.truth.haha = data.haha;
+          // this.truth.meh = data.meh;
+          return true;
+        })
+        .catch((e) => {
+          this.$toast.error('We did something wrong');
+          return false;
+        });
+      return response;
+    },
+
+    async haha(event) {
+      const userId = this.$auth.$storage.getCookie('token');
+      const truismId = this.truth.id;
+      const interactionType = 'haha';
+      let status;
       if (this.disliked) {
+        const oldValue = this.truth.meh;
         this.truth.meh =
           this.truth.meh > 0 ? (this.truth.meh -= 1) : this.truth.meh;
         this.disliked = false;
-        return true;
-      }
-
-      if (this.liked) {
-        this.truth.haha--;
-        this.liked = false;
-      } else {
-        this.truth.haha++;
-        this.liked = true;
-      }
-    },
-    meh() {
-      if (this.liked) {
+        this.mehd = '';
+        status = await this.interact(userId, truismId, interactionType);
+        if (!status) {
+          this.disliked = true;
+          this.truth.meh = oldValue;
+          this.mehd = 'aqua';
+        }
+      } else if (this.liked) {
+        const oldValue = this.truth.haha;
         this.truth.haha =
           this.truth.haha > 0 ? (this.truth.haha -= 1) : this.truth.haha;
         this.liked = false;
-        return true;
-      }
-
-      if (this.disliked) {
-        this.truth.meh--;
-        this.disliked = false;
+        this.hahad = '';
+        status = await this.interact(userId, truismId, interactionType);
+        if (!status) {
+          this.liked = true;
+          this.truth.haha = oldValue;
+          this.hahad = 'aqua';
+        }
       } else {
-        this.truth.meh++;
-        this.disliked = true;
+        this.truth.haha++;
+        this.hahad = 'aqua';
+        this.liked = true;
+        status = await this.interact(userId, truismId, interactionType);
+        if (!status) {
+          this.liked = false;
+          this.truth.haha--;
+          this.hahad = '';
+        }
       }
     },
-    share() {},
-    difference(seen, unseen) {
-      const difference = unseen;
-      for (const id in seen) {
-        unseen.delete(id);
+
+    async meh() {
+      const userId = this.$auth.$storage.getCookie('token');
+      const truismId = this.truth.id;
+      const interactionType = 'meh';
+      if (this.liked) {
+        const oldValue = this.truth.haha;
+        this.truth.haha =
+          this.truth.haha > 0 ? (this.truth.haha -= 1) : this.truth.haha;
+        this.liked = false;
+        this.hahad = '';
+        const status = await this.interact(userId, truismId, interactionType);
+        if (!status) {
+          this.truth.haha = oldValue;
+          this.liked = true;
+          this.hahad = 'aqua';
+        }
+      } else if (this.disliked) {
+        const oldValue = this.truth.meh;
+        this.truth.meh =
+          this.truth.meh > 0 ? (this.truth.meh -= 1) : this.truth.meh;
+        this.mehd = '';
+        this.disliked = false;
+        const status = await this.interact(userId, truismId, interactionType);
+        if (!status) {
+          this.truth.meh = oldValue;
+          this.mehd = 'aqua';
+          this.disliked = true;
+        }
+      } else {
+        this.truth.meh++;
+        this.mehd = 'aqua';
+        this.disliked = true;
+        const status = await this.interact(userId, truismId, interactionType);
+        if (!status) {
+          this.truth.meh--;
+          this.mehd = '';
+          this.disliked = false;
+        }
       }
-      return difference;
     }
   }
 };
@@ -157,5 +296,9 @@ html {
 
 .btn-pink {
   @apply bg-pink-700;
+}
+
+#aqua {
+  color: aqua;
 }
 </style>

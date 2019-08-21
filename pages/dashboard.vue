@@ -17,12 +17,18 @@
         <input
           id="author"
           v-model="author"
+          v-validate="'required'"
+          data-vv-validate-on="blur"
           :disabled="loading"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           type="text"
           placeholder="Author"
           required
+          name="author"
         />
+        <span v-show="errors.has('author')" class="text-red-700">{{
+          errors.first('author')
+        }}</span>
       </div>
       <div class="mb-6">
         <label class="block text-gray-700 text-sm font-bold mb-2" for="truth">
@@ -31,14 +37,20 @@
         <textarea
           id="truth"
           v-model="truth"
+          v-validate="'required|min:20'"
+          data-vv-validate-on="blur"
           :disabled="loading"
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
           placeholder="Enter truth"
           cols="10"
           rows="10"
           required
+          name="truth"
         >
         </textarea>
+        <span v-show="errors.has('truth')" class="text-red-700">{{
+          errors.first('truth')
+        }}</span>
       </div>
       <div class="flex items-center justify-center">
         <div v-if="!loading">
@@ -47,7 +59,7 @@
             type="button"
             @click.prevent="submit"
           >
-            Enter
+            Submit
           </button>
           <button
             class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -81,14 +93,32 @@ export default {
   methods: {
     logOut() {
       if (confirm(`Log Out ?`)) {
+        this.$toast.show('Logging out...');
+        this.$auth.logout('local');
       }
     },
     submit() {
-      this.loading = true;
-      // const author = this.author;
-      // const truth = this.truth;
-      // const haha = 0;
-      // const mehs = 0;
+      this.$validator.validate().then((valid) => {
+        if (!valid) {
+          return false;
+        }
+        this.loading = true;
+        const author = this.author;
+        const truism = this.truth;
+        this.$axios
+          .post('/api/admin', { author, truism })
+          .then(() => {
+            this.$toast.show('Created.');
+            this.$nextTick().then(() => {
+              this.author = '';
+              this.truth = '';
+            });
+          })
+          .catch((err) => {
+            this.$toast.error(`Error: ${err}`);
+          })
+          .finally(() => (this.loading = false));
+      });
     }
   }
 };
