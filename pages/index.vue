@@ -27,30 +27,22 @@
         <a title="Listen Again" class="btn" href="#" @click.prevent="speak"
           ><i class="fas fa-volume-up"></i
         ></a>
-        <a
-          :id="hahad"
-          class="btn lg:flex reaction"
-          href="#"
-          @click.prevent="hahaha"
-          ><i class="fas fa-grin-alt"></i>
-          <span>{{ truth.haha ? truth.haha : '' }}</span></a
-        >
-        <a
-          :id="mehd"
-          class="btn lg:flex reaction"
-          href="#"
-          @click.prevent="meh()"
+        <a :id="hahad" class="btn lg:flex" href="#" @click.prevent="hahaha"
+          ><i class="fas fa-grin-alt"></i> {{ truth.haha ? truth.haha : '' }}
+        </a>
+        <a :id="mehd" class="btn lg:flex" href="#" @click.prevent="meh()"
           ><i class="fas fa-meh-rolling-eyes"></i>
-          <span>{{ truth.meh ? truth.meh : '' }}</span></a
-        >
-        <a
+          {{ truth.meh ? truth.meh : '' }}
+        </a>
+        <button
           :id="blinking"
           :disabled="loading"
           class="btn"
           href="#"
           @click.prevent="another"
-          >→</a
         >
+          <i class="fas fa-angle-double-right"></i>
+        </button>
       </div>
     </div>
   </main>
@@ -65,7 +57,8 @@ export default {
       mehd: '',
       hahad: '',
       blinking: '',
-      loading: false
+      loading: false,
+      status: true
     };
   },
 
@@ -76,6 +69,10 @@ export default {
 
     author() {
       return this.truth.author;
+    },
+
+    online() {
+      return this.status;
     }
   },
 
@@ -131,6 +128,13 @@ export default {
   },
 
   mounted() {
+    window.addEventListener('offline', function(e) {
+      this.status = window.navigator.onLine;
+    });
+
+    window.addEventListener('online', function(e) {
+      this.status = window.navigator.onLine;
+    });
     this.setInteraction();
     setInterval(() => {
       this.another();
@@ -156,12 +160,16 @@ export default {
     },
 
     async another() {
+      if (!this.online) {
+        this.$toast.error('Offline. Please connect to network and try again');
+        return;
+      }
       this.blinking = 'blinking';
       this.loading = true;
       const id = this.$auth.$storage.getCookie('token');
       const truth = await this.$axios.$get(`/api/truism/${id}`);
       if (!truth) {
-        this.$toast.error('Could not connect due to poor internet connection.');
+        this.$toast.error('Network change detected. Please try again');
       }
       this.truth = truth;
       this.setInteraction();
@@ -235,6 +243,10 @@ export default {
     },
 
     async hahaha() {
+      if (!this.online) {
+        this.$toast.error('Offline. Please connect to network and try again');
+        return;
+      }
       const userId = this.$auth.$storage.getCookie('token');
       const truismId = this.truth.id;
       const interactionType = 'haha';
@@ -277,6 +289,10 @@ export default {
     },
 
     async meh() {
+      if (!this.online) {
+        this.$toast.error('Offline. Please connect to network and try again');
+        return;
+      }
       const userId = this.$auth.$storage.getCookie('token');
       const truismId = this.truth.id;
       const interactionType = 'meh';
@@ -352,6 +368,12 @@ html {
   animation: loading 1s ease;
   animation-iteration-count: infinite;
   color: #ffb404;
+}
+
+#blinking:active,
+#blinking:visited {
+  border: none;
+  outline: none;
 }
 
 @keyframes loading {
