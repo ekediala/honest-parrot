@@ -23,7 +23,7 @@
           {{ content }}
         </p>
       </div>
-      <div class="flex lg:flex-col text-gray-100 justify-center">
+      <div class="flex lg:flex-col text-gray-100 mb-4 lg:-mt-40 justify-center">
         <a title="Listen Again" class="btn" href="#" @click.prevent="speak"
           ><i class="fas fa-volume-up"></i
         ></a>
