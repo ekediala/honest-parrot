@@ -24,10 +24,10 @@
           :id="hahad"
           class="btn reaction"
           href="#"
-          @click.prevent="haha($event)"
+          @click.prevent="haha()"
           ><i class="fas fa-grin-alt"></i> {{ truth.haha ? truth.haha : '' }}</a
         >
-        <a :id="mehd" class="btn reaction" href="#" @click.prevent="meh($event)"
+        <a :id="mehd" class="btn reaction" href="#" @click.prevent="meh()"
           ><i class="fas fa-meh-rolling-eyes"></i>
           {{ truth.meh ? truth.meh : '' }}</a
         >
@@ -199,7 +199,7 @@ export default {
       return response;
     },
 
-    async haha(event) {
+    async haha() {
       const userId = this.$auth.$storage.getCookie('token');
       const truismId = this.truth.id;
       const interactionType = 'haha';
