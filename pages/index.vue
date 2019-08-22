@@ -3,7 +3,9 @@
     <div
       class="m-auto md:m-20 lg:m-32 lg:flex h-auto rounded md:rounded-lg overflow-hidden"
     >
-      <div class="rounded-lg h-auto lg:min-h-md lg:min-w-md lg:w-3/5 shadow-lg">
+      <div
+        class="rounded-lg img md:h-auto lg:min-h-md lg:min-w-md lg:w-3/5 shadow-lg"
+      >
         <img
           class="w-full h-full shadow-lg rounded-lg object-cover"
           src="../assets/img/parrot.jpg"
@@ -353,6 +355,24 @@ html {
 @keyframes loading {
   0% {
     transform: scale(1.5);
+  }
+}
+
+@media screen and (max-width: 760px) {
+  .img {
+    height: 25rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .img {
+    height: 22rem;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  .img {
+    height: 19rem;
   }
 }
 </style>
