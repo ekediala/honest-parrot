@@ -217,7 +217,9 @@ export default {
         .post('/api/interact', { userId, truismId, interactionType })
         .then((response) => {
           this.truth =
-            this.truth === response.data ? response.data : this.truth;
+            this.truth.truism === response.data.truism
+              ? response.data
+              : this.truth;
           this.setInteraction();
           // this.truth.haha = data.haha;
           // this.truth.meh = data.meh;
