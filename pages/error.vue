@@ -22,6 +22,6 @@ export default {
 <style>
 html {
   background-color: #14171a;
-  color: yellow;
+  color: red;
 }
 </style>
