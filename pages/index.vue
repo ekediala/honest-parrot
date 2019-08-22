@@ -1,10 +1,10 @@
 <template>
   <main class="h-full h-screen">
     <div
-      class="m-auto md:m-20 lg:m-32 lg:flex h-auto rounded md:rounded-lg overflow-hidden"
+      class="m-auto md:m-10 lg:m-32 lg:flex h-auto rounded md:rounded-lg overflow-hidden"
     >
       <div
-        class="rounded-lg img md:h-auto lg:min-h-md lg:min-w-md lg:w-3/5 shadow-lg"
+        class="rounded-lg img lg:h-auto lg:min-h-md lg:min-w-md lg:w-3/5 shadow-lg"
       >
         <img
           class="w-full h-full shadow-lg rounded-lg object-cover"
@@ -358,21 +358,21 @@ html {
   }
 }
 
-@media screen and (max-width: 760px) {
+@media screen and (max-width: 768px) {
   .img {
-    height: 25rem;
+    height: 40rem;
   }
 }
 
 @media screen and (max-width: 480px) {
   .img {
-    height: 22rem;
+    height: 25rem;
   }
 }
 
 @media screen and (max-width: 320px) {
   .img {
-    height: 19rem;
+    height: 20rem;
   }
 }
 </style>
