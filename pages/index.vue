@@ -187,12 +187,13 @@ export default {
         .post('/api/interact', { userId, truismId, interactionType })
         .then((response) => {
           this.truth = response.data;
+          this.setInteraction();
           // this.truth.haha = data.haha;
           // this.truth.meh = data.meh;
           return true;
         })
         .catch((e) => {
-          this.$toast.error('We did something wrong');
+          this.$toast.error('Poor internet connection.');
           return false;
         });
       return response;
