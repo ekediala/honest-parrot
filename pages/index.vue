@@ -116,7 +116,7 @@ export default {
     setInteraction() {
       const interactions = this.truth.interactions;
       const id = this.$auth.$storage.getCookie('token');
-      this.haha = '';
+      this.hahad = '';
       this.mehd = '';
       if (interactions.hasOwnProperty(id)) {
         const interaction = interactions[id];
