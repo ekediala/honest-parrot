@@ -159,37 +159,30 @@ export default {
       }
     },
 
-    async another() {
-      if (!this.online) {
-        this.$toast.error('Offline. Please connect to network and try again');
+    another() {
+      if (!this.status) {
+        this.$toast.error('Something went wrong. Probably poor internet.');
         return;
       }
       this.blinking = 'blinking';
       this.loading = true;
       const id = this.$auth.$storage.getCookie('token');
-      const truth = await this.$axios.$get(`/api/truism/${id}`);
-      if (!truth) {
-        this.$toast.error('Network change detected. Please try again');
-      }
-      this.truth = truth;
-      this.setInteraction();
-      this.blinking = '';
-      this.loading = false;
+      this.$axios
+        .$get(`/api/truism/${id}`)
+        .then((response) => {
+          this.truth = response;
+        })
+        .catch(() => {
+          this.$toast.error('Something went wrong. Probably poor internet.');
+        })
+        .finally(() => {
+          this.setInteraction();
+          this.blinking = '';
+          this.loading = false;
+        });
     },
 
     speak() {
-      // list of languages is probably not loaded, wait for it
-      if (window.speechSynthesis.getVoices().length === 0) {
-        window.speechSynthesis.addEventListener('voiceschanged', () => {
-          this.textToSpeech();
-        });
-      } else {
-        // languages list available, no need to wait
-        this.textToSpeech();
-      }
-    },
-
-    textToSpeech() {
       // get all voices that browser offers
       const availableVoices = window.speechSynthesis.getVoices();
 
@@ -221,13 +214,15 @@ export default {
     },
 
     async interact(userId, truismId, interactionType) {
+      if (!this.status) {
+        this.$toast.error('Something went wrong. Probably poor internet.');
+        return;
+      }
       const response = await this.$axios
         .post('/api/interact', { userId, truismId, interactionType })
-        .then((response) => {
+        .then((res) => {
           this.truth =
-            this.truth.truism === response.data.truism
-              ? response.data
-              : this.truth;
+            this.truth.truism === res.data.truism ? res.data : this.truth;
           this.setInteraction();
           // this.truth.haha = data.haha;
           // this.truth.meh = data.meh;
