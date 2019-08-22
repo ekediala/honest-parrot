@@ -1,33 +1,54 @@
 <template>
   <main class="h-full h-screen">
     <div
-      class="max-w-md m-auto md:mt-16 h-auto rounded md:rounded-lg overflow-hidden"
+      class="m-auto md:m-20 lg:m-32 lg:flex h-auto rounded md:rounded-lg overflow-hidden"
     >
-      <img
-        class="w-full rounded-lg shadow-lg h-64"
-        src="../assets/img/parrot.jpg"
-        alt="Sunset in the mountains"
-      />
-      <div class="px-6 justify-center py-4">
-        <div v-if="author" class="font-bold text-2xl md:text-4xl mt-8 mb-4">
+      <div class="rounded-lg h-auto lg:min-h-md lg:min-w-md lg:w-3/5 shadow-lg">
+        <img
+          class="w-full h-full shadow-lg rounded-lg object-cover"
+          src="../assets/img/parrot.jpg"
+          alt="Sunset in the mountains"
+        />
+      </div>
+      <div class="px-12 lg:w-full justify-center py-4">
+        <div
+          v-if="author"
+          class="font-bold text-2xl md:text-4xl lg:-mt-4 mt-8 mb-4"
+        >
           {{ author }}
         </div>
         <p v-if="content" class="text-blue-200 font-mono md:text-xl text-base">
           {{ content }}
         </p>
       </div>
-      <div class="flex text-gray-100 justify-center">
+      <div class="flex lg:flex-col text-gray-100 justify-center">
         <a title="Listen Again" class="btn" href="#" @click.prevent="speak"
           ><i class="fas fa-volume-up"></i
         ></a>
-        <a :id="hahad" class="btn reaction" href="#" @click.prevent="hahaha"
-          ><i class="fas fa-grin-alt"></i> {{ truth.haha ? truth.haha : '' }}</a
+        <a
+          :id="hahad"
+          class="btn lg:flex reaction"
+          href="#"
+          @click.prevent="hahaha"
+          ><i class="fas fa-grin-alt"></i>
+          <span>{{ truth.haha ? truth.haha : '' }}</span></a
         >
-        <a :id="mehd" class="btn reaction" href="#" @click.prevent="meh()"
+        <a
+          :id="mehd"
+          class="btn lg:flex reaction"
+          href="#"
+          @click.prevent="meh()"
           ><i class="fas fa-meh-rolling-eyes"></i>
-          {{ truth.meh ? truth.meh : '' }}</a
+          <span>{{ truth.meh ? truth.meh : '' }}</span></a
         >
-        <a class="btn" href="#" @click.prevent="another">→</a>
+        <a
+          :id="blinking"
+          :disabled="loading"
+          class="btn"
+          href="#"
+          @click.prevent="another"
+          >→</a
+        >
       </div>
     </div>
   </main>
@@ -40,7 +61,9 @@ export default {
       liked: false,
       disliked: false,
       mehd: '',
-      hahad: ''
+      hahad: '',
+      blinking: '',
+      loading: false
     };
   },
 
@@ -131,10 +154,17 @@ export default {
     },
 
     async another() {
+      this.blinking = 'blinking';
+      this.loading = true;
       const id = this.$auth.$storage.getCookie('token');
       const truth = await this.$axios.$get(`/api/truism/${id}`);
+      if (!truth) {
+        this.$toast.error('Could not connect due to poor internet connection.');
+      }
       this.truth = truth;
       this.setInteraction();
+      this.blinking = '';
+      this.loading = false;
     },
 
     speak() {
@@ -184,14 +214,17 @@ export default {
       const response = await this.$axios
         .post('/api/interact', { userId, truismId, interactionType })
         .then((response) => {
-          this.truth = response.data;
+          this.truth =
+            this.truth === response.data ? response.data : this.truth;
           this.setInteraction();
           // this.truth.haha = data.haha;
           // this.truth.meh = data.meh;
           return true;
         })
         .catch((e) => {
-          this.$toast.error('Poor internet connection.');
+          this.$toast.error(
+            'Could not connect due to poor internet connection.'
+          );
           return false;
         });
       return response;
@@ -285,7 +318,7 @@ export default {
 
 <style>
 html {
-  background-color: rgba(6, 5, 51, 0.904);
+  background-color: #14171a;
   color: yellow;
 }
 
@@ -309,5 +342,17 @@ html {
 
 #aqua {
   color: #ffb404;
+}
+
+#blinking {
+  animation: loading 1s ease;
+  animation-iteration-count: infinite;
+  color: #ffb404;
+}
+
+@keyframes loading {
+  0% {
+    transform: scale(1.5);
+  }
 }
 </style>
