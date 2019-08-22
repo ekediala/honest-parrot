@@ -20,11 +20,7 @@
         <a title="Listen Again" class="btn" href="#" @click.prevent="speak"
           ><i class="fas fa-volume-up"></i
         ></a>
-        <a
-          :id="hahad"
-          class="btn reaction"
-          href="#"
-          @click.prevent="haha()"
+        <a :id="hahad" class="btn reaction" href="#" @click.prevent="hahaha"
           ><i class="fas fa-grin-alt"></i> {{ truth.haha ? truth.haha : '' }}</a
         >
         <a :id="mehd" class="btn reaction" href="#" @click.prevent="meh()"
@@ -133,12 +129,14 @@ export default {
         }
       }
     },
+
     async another() {
       const id = this.$auth.$storage.getCookie('token');
       const truth = await this.$axios.$get(`/api/truism/${id}`);
       this.truth = truth;
       this.setInteraction();
     },
+
     speak() {
       // list of languages is probably not loaded, wait for it
       if (window.speechSynthesis.getVoices().length === 0) {
@@ -199,7 +197,7 @@ export default {
       return response;
     },
 
-    async haha() {
+    async hahaha() {
       const userId = this.$auth.$storage.getCookie('token');
       const truismId = this.truth.id;
       const interactionType = 'haha';
