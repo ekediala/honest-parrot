@@ -145,6 +145,8 @@ export default {
     setInteraction() {
       const interactions = this.truth.interactions;
       const id = this.$auth.$storage.getCookie('token');
+      this.liked = false;
+      this.disliked = false;
       this.hahad = '';
       this.mehd = '';
       if (interactions.hasOwnProperty(id)) {
