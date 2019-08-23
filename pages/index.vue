@@ -24,9 +24,15 @@
         </p>
       </div>
       <div class="flex lg:flex-col text-gray-100 mb-4 lg:-mt-40 justify-center">
-        <a title="Listen Again" class="btn" href="#" @click.prevent="speak"
-          ><i class="fas fa-volume-up"></i
-        ></a>
+        <button
+          title="Listen"
+          :disabled="loading"
+          class="btn"
+          href="#"
+          @click.prevent="speak"
+        >
+          <i class="fas fa-volume-up"></i>
+        </button>
         <a :id="hahad" class="btn lg:flex" href="#" @click.prevent="hahaha"
           ><i class="fas fa-grin-alt"></i> {{ truth.haha ? truth.haha : '' }}
         </a>
@@ -58,7 +64,9 @@ export default {
       hahad: '',
       blinking: '',
       loading: false,
-      status: true
+      status: true,
+      userSelected: false,
+      interval: false
     };
   },
 
@@ -135,10 +143,14 @@ export default {
     window.addEventListener('online', function(e) {
       this.status = window.navigator.onLine;
     });
+
     this.setInteraction();
-    setInterval(() => {
+    setTimeout(() => {
+      if (this.userSelected) {
+        return;
+      }
       this.another();
-    }, 120000);
+    }, 180000);
   },
 
   methods: {
@@ -166,6 +178,19 @@ export default {
         this.$toast.error('Something went wrong. Probably poor internet.');
         return;
       }
+
+      if (!this.userSelected) {
+        this.userSelected = true;
+      }
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+      this.interval = setInterval(() => {
+        this.another();
+      }, 180000);
       this.blinking = 'blinking';
       this.loading = true;
       const id = this.$auth.$storage.getCookie('token');
@@ -347,7 +372,8 @@ html {
   @apply inline-block rounded-full px-3 py-1 text-xl font-semibold mr-2;
 }
 
-.btn:active {
+.btn:active,
+.btn:visited {
   transition: all 1s ease;
   transform: scale(0.7);
   @apply border-none outline-none;
