@@ -84,7 +84,7 @@ export default {
     }
   },
 
-  async asyncData({ $axios, $auth }) {
+  async asyncData({ $axios, $auth, $toast, error }) {
     if (!$auth.$storage.getCookie('token')) {
       let choice = '';
       const choices = [
@@ -130,9 +130,17 @@ export default {
       }
       $auth.$storage.setCookie('token', choice);
     }
+
     const id = $auth.$storage.getCookie('token');
-    const truth = await $axios.$get(`/api/truism/${id}`);
-    return { truth };
+    try {
+      const truth = await $axios.$get(`/api/truism/${id}`);
+      return { truth };
+    } catch (e) {
+      error({
+        statusCode: 502,
+        message: 'Network error. Please reload the page.'
+      });
+    }
   },
 
   mounted() {
