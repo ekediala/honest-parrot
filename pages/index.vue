@@ -85,6 +85,11 @@ export default {
   },
 
   async asyncData({ $axios, $auth, $toast, error }) {
+    /**
+     * Create or fetch unique user ID to serve them
+     * content based on what they've already seen or not
+     * and fetch content.
+     */
     if (!$auth.$storage.getCookie('token')) {
       let choice = '';
       const choices = [
@@ -256,11 +261,6 @@ export default {
       const response = await this.$axios
         .post('/api/interact', { userId, truismId, interactionType })
         .then((res) => {
-          this.truth =
-            this.truth.truism === res.data.truism ? res.data : this.truth;
-          this.setInteraction();
-          // this.truth.haha = data.haha;
-          // this.truth.meh = data.meh;
           return true;
         })
         .catch((e) => {
