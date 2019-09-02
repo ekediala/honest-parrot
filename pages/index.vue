@@ -166,7 +166,7 @@ export default {
     }, 180000);
   },
 
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener('offline');
     window.removeEventListener('online');
     if (this.interval) {
