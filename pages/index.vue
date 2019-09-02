@@ -169,6 +169,9 @@ export default {
   destroyed() {
     window.removeEventListener('offline');
     window.removeEventListener('online');
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   },
 
   methods: {
