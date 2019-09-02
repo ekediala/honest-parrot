@@ -166,6 +166,11 @@ export default {
     }, 180000);
   },
 
+  destroyed() {
+    window.removeEventListener('offline');
+    window.removeEventListener('online');
+  },
+
   methods: {
     setInteraction() {
       const interactions = this.truth.interactions;
